@@ -1,0 +1,31 @@
+00=impassable (wall)(+extra tile on bottom)
+01=passable(top extra tile)
+02=passable(bottom extra tile)
+
+
+
+C0=sign*(button)(tile,top/bottom,type,string,lines,offsetx,offsety,linelength)
+tile,	type 	lines	offsetx	offsety	linelength
+	Type
+	00 = 1 line small box length top left of screen: 
+	01 = 1 line small box length top right of screen:  
+	02 = multi line box multi line top of screen: no clipping,
+	03 = multi line box multi line bottom of screen: no clipping,
+	04 = random box any location any size: clipping,
+
+
+C5=warp*(step)(tile,top/bottom,type,mapto,mapx,mapy)
+	Type
+	00=simple warp (no animation map A or map B don't move once on new map)
+	01=simple warp (no animation map A or map B move once on new map)
+	02=door in(door animation outside, no animation inside, don't move once on new map)
+	03=door out(no animation inside, door animation outside, move once on new map)
+
+
+
+
+
+
+DRAWN NOT CODED
+03=battle(no animation)(top extra tile)
+04=battle(no animation)(bottom extra tile)

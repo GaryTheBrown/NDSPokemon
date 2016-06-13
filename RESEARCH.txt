@@ -1,0 +1,344 @@
+*******************************************************************************
+TODO
+*******************************************************************************
+question box.
+animation.
+collision data.
+sprites.
+NPC scripts.
+warps.
+
+*********************************************************************************
+info
+*********************************************************************************
+Palettes in a nutshell
+Sprites get one palette, and background layers another. 
+Each palette has 256 halfword entries. 
+Each entry contains 5 bits of red, 5 bits of green, 5 bits of blue, and an unused bit. 
+PALETTE_BG1 is at 0x05000000 (background palette for 2D core A) 
+PALETTE_FG1 is at 0x05000200 (sprite palette for 2D core A) 
+PALETTE_BG2 is at 0x05000400 (background palette for 2D core B) 
+PALETTE_FG2 is at 0x05000600 (sprite palette for 2D core B) 
+
+sprites off screen info (need to turn sprite on at this distance and off if any further away)
+up  Y-7
+down Y+7
+left X-9
+right X+9
+
+
+gfx2gba code for tilesets gfx2gba.exe -pPallette -C256 -fsrc -T16 -m -t8 -F Tileset.bmp
+
+gbfs may be needed to store all maps, tiles, pallettes. intro, text, and basic info for game.
+
+player direction:0 = no movement, 1 = up, 2 = down, 3 = left, 4 = right
+y = up-down x = left-right
+(y)192 x (x)256 (y)256 x (x)512
+
+
+meta-palette data needs to be used to allow full colour range for the game., need to split the tilesets into 3 layers (ground, below player, above player) split certain tiles up into groups that can be loaded whenever needed. create source files.
+
+NEED TO ALTER GRAPHICS AND THEN COMPILE THEM ALL AT THE SAME TIME SO THE PALLETTE USED IS THE SAME WILL NEED TO LOOK INTO SORTING THIS SO PALLETTES DON'T CLASH  if possible sepirate palettes for bg's THERE IS A FULL 4096 available somehow maybe look at using this.
+
+take all graphics and look at how many unique tiles there are and see if we can reduce this for use in 2 tilesets total. splitting into bottom, top and buildings.
+
+Object all commands and info.(need to make all functions in map a part of map class. do this for all and have them able to ask for other info. sprites, map, player, battle, intro, menu.)
+
+animation of tiles.
+every 60vblanks = 1 second so change by 60/frames
+
+advanced tile loading. will need to split up tilemaps into useful groups.
+
+collision detection with ability to expand. DOING
+
+
+* is extradata (points to array/struct for info)
+
+00-0F==basic movement (2 spare)
+
+00=wall(+extra tile on bottom)
+01=pass(top extra tile)
+02=pass(bottom extra tile)
+03=battle(no animation)(top extra tile)
+04=battle(no animation)(bottom extra tile)
+05=battle(walkthrough ie grass)(top and middle used)
+06=special item access*(top tile)(item,using(active)/carrying/wearing)
+07=special item access*(bottom tile)(item,using(active)/carrying/wearing)
+08=special globalvar access*(top tile)(item,using(active)/carrying/wearing)
+09=special globalvar access*(bottom tile)(item,using(active)/carrying/wearing)
+0A=special tempvar access*(top tile)(item,using(active)/carrying/wearing)
+0B=special tempvar access*(bottom tile)(item,using(active)/carrying/wearing)
+0C=blocked/hidden path until* "opened"(var true)(top/bottom,var,open sprite id,closed sprite id)
+0D=blocked/hidden path until* "closed"(var false)(top/bottom,var,open sprite id,closed sprite id)
+0E=blocked/hidden path until* "opened"(temp on map var true)(top/bottom,tempvar,open sprite id,closed sprite id)
+0F=blocked/hidden path until* "closed"(temp on map var false)(top/bottom,tempvar,open sprite id,closed sprite id)
+
+10-5F==special automove tiles(bottom tile) (10 spare)
+
+10=drop down(down only)
+11=drop down(left only)
+12=drop down(left only)
+13=drop down(up only)(is this one needed?)
+14=slide down (down only)
+15=slide down(left only)
+16=slide down(left only)
+17=slide down(up only)
+18=autowalk till stop or wall(direction your moving)
+19=autowalk till stop or wall(opposite direction your moving)
+1A=autowalk till stop or wall(90 left direction your moving)
+1B=autowalk till stop or wall(90 right direction your moving)
+1C=autowalk till stop or wall(up)
+1D=autowalk till stop or wall(down)
+1E=autowalk till stop or wall(left)
+1F=autowalk till stop or wall(right)
+20=slide till stop or wall(direction your moving)
+21=slide till stop or wall(opposite direction your moving)
+22=slide till stop or wall(90 left direction your moving)
+23=slide till stop or wall(90 right direction your moving)
+24=slide till stop or wall(up)
+25=slide till stop or wall(down)
+26=slide till stop or wall(left)
+27=slide till stop or wall(right)
+28=spin till stop or wall(direction your moving)
+29=spin till stop or wall(opposite direction your moving)
+2A=spin till stop or wall(90 left direction your moving)
+2B=spin till stop or wall(90 right direction your moving)
+2C=spin till stop or wall(up)
+2D=spin till stop or wall(down)
+2E=spin till stop or wall(left)
+2F=spin till stop or wall(right)
+30=walk 1 step(ignore collision of steps)(direction your moving)
+31=walk 1 step(ignore collision of steps)(opposite direction your moving)
+32=walk 1 step(ignore collision of steps)(90 left direction your moving)
+33=walk 1 step(ignore collision of steps)(90 right direction your moving)
+34=walk 1 step(ignore collision of steps)(up)
+35=walk 1 step(ignore collision of steps)(down)
+36=walk 1 step(ignore collision of steps)(left)
+37=walk 1 step(ignore collision of steps)(right)
+38=walk 2 steps(ignore collision of steps)(direction your moving)
+39=walk 2 steps(ignore collision of steps)(opposite direction your moving)
+3A=walk 2 steps(ignore collision of steps)(90 left direction your moving)
+3B=walk 2 steps(ignore collision of steps)(90 right direction your moving)
+3C=walk 2 steps(ignore collision of steps)(up)
+3D=walk 2 steps(ignore collision of steps)(down)
+3E=walk 2 steps(ignore collision of steps)(left)
+3F=walk 2 steps(ignore collision of steps)(right)
+40=walk 3 steps(ignore collision of steps)(direction your moving)
+41=walk 3 steps(ignore collision of steps)(opposite direction your moving)
+42=walk 3 steps(ignore collision of steps)(90 left direction your moving)
+43=walk 3 steps(ignore collision of steps)(90 right direction your moving)
+44=walk 3 steps(ignore collision of steps)(up)
+45=walk 3 steps(ignore collision of steps)(down)
+46=walk 3 steps(ignore collision of steps)(left)
+47=walk 3 steps(ignore collision of steps)(right)
+48=automove turn (90 left)
+49=automove turn (90 right)
+4A=automove turn (180 uturn)
+4B=automove turn (left)
+4C=automove turn (right)
+4D=automove turn (up)
+4E=automove turn (down)
+4F=stopper(will stop automove)
+50=collapsable floor very slow(timing of CAN walking 4 tiles before drop)
+51=collapsable floor slow(timing of CAN walking 2 tiles before drop)
+52=collapsable floor normal(timing of CAN walking 1 tiles before drop)
+53=collapsable floor fast(timing of CAN walking 1/2 tiles before drop will need to use something to get speed or something to make you lighter)
+54=collapsable floor very fast(timing of CAN walking 1/4 tiles before drop will need to use something to get speed or something to make you lighter)
+55=collapsable floor collapse no matter what
+56=??
+57=??
+58=??
+59=??
+5A=??
+5B=??
+5C=??
+5D=??
+5E=??
+5F=??
+
+60-AF==special automove tiles(top tile)(10 spare)
+
+60=drop down(down only)
+61=drop down(left only)
+62=drop down(left only)
+63=drop down(up only)(is this one needed?)
+64=slide down (down only)
+65=slide down(left only)
+66=slide down(left only)
+67=slide down(up only)
+68=autowalk till stop or wall(direction your moving)
+69=autowalk till stop or wall(opposite direction your moving)
+6A=autowalk till stop or wall(90 left direction your moving)
+6B=autowalk till stop or wall(90 right direction your moving)
+6C=autowalk till stop or wall(up)
+6D=autowalk till stop or wall(down)
+6E=autowalk till stop or wall(left)
+6F=autowalk till stop or wall(right)
+70=slide till stop or wall(direction your moving)
+71=slide till stop or wall(opposite direction your moving)
+72=slide till stop or wall(90 left direction your moving)
+73=slide till stop or wall(90 right direction your moving)
+74=slide till stop or wall(up)
+75=slide till stop or wall(down)
+76=slide till stop or wall(left)
+77=slide till stop or wall(right)
+78=spin till stop or wall(direction your moving)
+79=spin till stop or wall(opposite direction your moving)
+7A=spin till stop or wall(90 left direction your moving)
+7B=spin till stop or wall(90 right direction your moving)
+7C=spin till stop or wall(up)
+7D=spin till stop or wall(down)
+7E=spin till stop or wall(left)
+7F=spin till stop or wall(right)
+80=walk 1 step(ignore collision of steps)(direction your moving)
+81=walk 1 step(ignore collision of steps)(opposite direction your moving)
+82=walk 1 step(ignore collision of steps)(90 left direction your moving)
+83=walk 1 step(ignore collision of steps)(90 right direction your moving)
+84=walk 1 step(ignore collision of steps)(up)
+85=walk 1 step(ignore collision of steps)(down)
+86=walk 1 step(ignore collision of steps)(left)
+87=walk 1 step(ignore collision of steps)(right)
+88=walk 2 steps(ignore collision of steps)(direction your moving)
+89=walk 2 steps(ignore collision of steps)(opposite direction your moving)
+8A=walk 2 steps(ignore collision of steps)(90 left direction your moving)
+8B=walk 2 steps(ignore collision of steps)(90 right direction your moving)
+8C=walk 2 steps(ignore collision of steps)(up)
+8D=walk 2 steps(ignore collision of steps)(down)
+8E=walk 2 steps(ignore collision of steps)(left)
+8F=walk 2 steps(ignore collision of steps)(right)
+90=walk 3 steps(ignore collision of steps)(direction your moving)
+91=walk 3 steps(ignore collision of steps)(opposite direction your moving)
+92=walk 3 steps(ignore collision of steps)(90 left direction your moving)
+93=walk 3 steps(ignore collision of steps)(90 right direction your moving)
+94=walk 3 steps(ignore collision of steps)(up)
+95=walk 3 steps(ignore collision of steps)(down)
+96=walk 3 steps(ignore collision of steps)(left)
+97=walk 3 steps(ignore collision of steps)(right)
+98=automove turn (90 left)
+99=automove turn (90 right)
+9A=automove turn (180 uturn)
+9B=automove turn (left)
+9C=automove turn (right)
+9D=automove turn (up)
+9E=automove turn (down)
+9F=stopper(will stop automove)
+A0=collapsable floor very slow(timing of CAN walking 4 tiles before drop)
+A1=collapsable floor slow(timing of CAN walking 2 tiles before drop)
+A2=collapsable floor normal(timing of CAN walking 1 tiles before drop)
+A3=collapsable floor fast(timing of CAN walking 1/2 tiles before drop will need to use something to get speed or something to make you lighter)
+A4=collapsable floor very fast(timing of CAN walking 1/4 tiles before drop will need to use something to get speed or something to make you lighter)
+A5=collapsable floor collapse no matter what
+A6=??
+A7=??
+A8=??
+A9=??
+AA=??
+AB=??
+AC=??
+AD=??
+AE=??
+AF=??
+
+B0-BF==water(2 spare)
+B0=shore water
+B1=shallow water
+B2=deep water
+B3=whirlpool
+B4=??
+B5=??
+B6=moving water(up)(CAN FIGHT CURRENT)
+B7=moving water(down)(CAN FIGHT CURRENT)
+B8=moving water(left)(CAN FIGHT CURRENT)
+B9=moving water(right)(CAN FIGHT CURRENT)
+BA=moving water(up)(CANNOT FIGHT CURRENT)
+BB=moving water(down)(CANNOT FIGHT CURRENT)
+BC=moving water(left)(CANNOT FIGHT CURRENT)
+BD=moving water(right)(CANNOT FIGHT CURRENT)
+==special actions done by pokemon (on water)
+BE=Waterfall(can climb with pokemon with waterfall move level up the move to allow bigger climbs)
+BF=Divespot*(depth depending on leveling up move)(script(name/id),watertype(moving etc),depth) (TO SECRET UNDERWATER CAVES)(can be used on any water tile)(could encourage battles or find items)
+
+C0-CF==actions by player(2 spare)
+C0=sign*(button)(tile,top/bottom,type,string,lines,offsetx,offsety,linelength)
+C1=sign*(step)(tile,top/bottom,type,string,lines,offsetx,offsety,linelength)
+C2=switch*(button)(tile,top/bottom,type,varid)
+C3=switch*(step)(tile,top/bottom,type,varid)
+C4=warp*(button)(tile,top/bottom,type,mapto,mapx,mapy)
+C5=warp*(step)(tile,top/bottom,type,mapto,mapx,mapy)
+C6=once per game global script*(button)(script(name/id),varid)
+C7=once per game global script*(step)(script(name/id),varid)
+C8=once per game single script on map*(button)(script(name/id),varid)
+C9=once per game single script on map*(step)(script(name/id),varid)
+CA=repeat per game global script*(button)(script(name/id))
+CB=repeat per game global script*(step)(script(name/id))
+CC=repeat per game map script*(button)(script(name/id))
+CD=repeat per game map script*(step)(script(name/id))
+CE=?? (button)
+CF=?? (step)
+
+D0-DF==special actions done by pokemon (on land)(leveling up move)((top/bottom)tile,strength,var(0=none(repeat)),alttile(0=none),script(name/id))(could encourage battles or find items)(11 spare)
+D0=cut*(bottom)(tile in front)
+D1=dig*(top)(TO SECRET CAVES)(tile bellow)
+D2=smash*(bottom)(tile in front)
+D3=melt/burn*(bottom)(TO SECRET CAVES)(tile in front)
+D4=waterjet*(bottom)(tile in front)
+D5=
+D6=
+D7=
+D8=
+D9=
+DA=
+DB=
+DC=
+DD=
+DE=
+DF=
+
+E0-EF==effects/system actions
+E0= change music (id) (max 255 tunes)
+E1=
+E2=
+E3=
+E4=
+E5=
+E6=
+E7=
+E8=
+E9=
+EA=
+EB=
+EC=
+ED=
+EF=
+
+F0-FF --spare 32
+
+Warp types
+00=simple warp (no animation map A or map B don't move once on new map)
+01=simple warp (no animation map A or map B move once on new map)
+02=door in(door animation outside, no animation inside, don't move once on new map)
+03=door out(no animation inside, door animation outside, move once on new map)
+04=
+05=
+need lock on sprite so can move screen and leave player off screen for cutscene
+
+music - add later
+
+old-->error codes and info screen that can tell what mistake has happened and how to correct it or a hint of what to look for and fix (could look at telling you what the error is in type of error and the solution if there is one.)
+new-->program that writes game file will do all checks. (maybe refuse to save if something wrong)(if something needs doing then force to do it the moment it is needed)(checks before compile to game)
+
+when I have all this working
+
+look at weather effects (using sprites) + seasons and Day night cycle using built in timer of ds. make time frame chosable.
+1 hour = 1 hour, 1 day = 1 day, 1 month = 1 season, 4 seasons = 1 year
+real time
+365 day year just use calender so leap years will be included
+spead up times
+4 hour = 1 day, etc...
+1 day = 1 season, etc
+
+make options of this fully customisable
+
+option to turn day night off 
+Weather on/off
+when included weather effects and you have them all sorted add info into map to say what can happen on maps ( some places are too warm for snow and it stops indoors from getting rain etc unless special building ie indoor ski slop if ever used in game or by pokemon protecting itself) would need the indoor sprites to include snow for the building but that would be for later inclusion as part of a story line.
